@@ -24,6 +24,14 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Valuenable requires Face ID authentication to securely access company Google Workspace data.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>cydia</string>
+		<string>sileo</string>
+		<string>zbra</string>
+		<string>filza</string>
+		<string>activator</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -31,7 +31,14 @@ public class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.makeKeyAndVisible()
         
         #if !targetEnvironment(simulator)
-        BiometricAuthManager.shared.authenticateUser { _, _ in }
+        showPrivacyMask()
+        BiometricAuthManager.shared.authenticateUser { [weak self] success, _ in
+            if success {
+                self?.hidePrivacyMask()
+            }
+            // On failure/cancel, the privacy mask stays up — the user is
+            // NOT dropped into the unlocked webview.
+        }
         #endif
     }
     public func sceneWillResignActive(_ scene: UIScene) {
