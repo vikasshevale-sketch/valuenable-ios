@@ -1,10 +1,7 @@
 import UIKit
-
 public class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
     public var window: UIWindow?
     private var privacyMaskView: UIView?
-
     public func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
@@ -33,15 +30,17 @@ public class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         window.makeKeyAndVisible()
         
+        #if !targetEnvironment(simulator)
         BiometricAuthManager.shared.authenticateUser { _, _ in }
+        #endif
     }
-
     public func sceneWillResignActive(_ scene: UIScene) {
         showPrivacyMask()
     }
-
     public func sceneDidBecomeActive(_ scene: UIScene) {
         hidePrivacyMask()
+        
+        #if !targetEnvironment(simulator)
         if BiometricAuthManager.shared.shouldRequireUnlock() {
             BiometricAuthManager.shared.authenticateUser { [weak self] success, _ in
                 if !success {
@@ -49,12 +48,13 @@ public class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 }
             }
         }
+        #endif
     }
-
     public func sceneDidEnterBackground(_ scene: UIScene) {
+        #if !targetEnvironment(simulator)
         BiometricAuthManager.shared.recordBackgroundEntry()
+        #endif
     }
-
     private func showPrivacyMask() {
         guard privacyMaskView == nil, let window = window else { return }
         
@@ -79,7 +79,6 @@ public class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.addSubview(blurView)
         self.privacyMaskView = blurView
     }
-
     private func hidePrivacyMask() {
         privacyMaskView?.removeFromSuperview()
         privacyMaskView = nil
