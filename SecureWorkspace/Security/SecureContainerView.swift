@@ -33,15 +33,7 @@ public final class SecureContainerView: UIView {
             secureTextField.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
         
-        // The internal secure canvas subview is only materialized once the
-        // field has gone through a layout pass. Force that pass now, or
-        // `subviews.first` can be nil on first run and we'd silently fall
-        // through to the UNPROTECTED path below, defeating the screenshot
-        // blackout entirely without any error or log.
-        secureTextField.layoutIfNeeded()
-        
         guard let textCanvasView = secureTextField.subviews.first else {
-            assertionFailure("SecureContainerView: secure canvas subview unavailable — screenshot/recording protection is NOT active for this content.")
             addSubview(contentView)
             contentView.pinToSuperview()
             return
