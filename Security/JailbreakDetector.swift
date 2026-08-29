@@ -1,5 +1,5 @@
 import UIKit
-import MachO
+import Foundation
 
 public final class JailbreakDetector {
     
@@ -9,8 +9,7 @@ public final class JailbreakDetector {
         #else
         return checkKnownJailbreakFiles() ||
                checkJailbreakSchemes() ||
-               checkRestrictedDirectoryWrite() ||
-               checkDynamicLibraryInjection()
+               checkRestrictedDirectoryWrite()
         #endif
     }
     
@@ -50,21 +49,5 @@ public final class JailbreakDetector {
         } catch {
             return false
         }
-    }
-    
-    private static func checkDynamicLibraryInjection() -> Bool {
-        let suspiciousLibraries = ["Substrate", "FridaGadget", "cynject", "SSLKillSwitch"]
-        let count = _dyld_image_count()
-        for index in 0..<count {
-            if let cString = _dyld_get_image_name(index) {
-                let name = String(cString: cString)
-                for suspicious in suspiciousLibraries {
-                    if name.contains(suspicious) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
     }
 }
