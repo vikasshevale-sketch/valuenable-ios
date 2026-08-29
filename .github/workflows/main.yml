@@ -1,4 +1,4 @@
-name: Build and Export iOS IPA
+name: Build iOS IPA and Simulator
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-ipa:
+  build-all:
     runs-on: macos-14
     steps:
       - name: Checkout repository
@@ -15,7 +15,8 @@ jobs:
       - name: Select Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode_15.4.app/Contents/Developer
 
-      - name: Build and Archive
+      # 1. Build for Real Devices & BrowserStack (.ipa)
+      - name: Build Real Device IPA
         run: |
           xcodebuild -project SecureWorkspace.xcodeproj \
             -scheme SecureWorkspace \
@@ -27,17 +28,38 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             archive
 
-      - name: Package Payload into IPA
-        run: |
           mkdir -p build/Payload
           cp -r build/SecureWorkspace.xcarchive/Products/Applications/SecureWorkspace.app build/Payload/
           cd build
           zip -r SecureWorkspace.ipa Payload
           cd ..
 
-      - name: Upload IPA Artifact
+      # 2. Build for Appetize.io Web Simulator (.app.zip)
+      - name: Build Appetize.io Simulator Package
+        run: |
+          xcodebuild -project SecureWorkspace.xcodeproj \
+            -scheme SecureWorkspace \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            build \
+            CONFIGURATION_BUILD_DIR=build/Simulator
+
+          cd build/Simulator
+          zip -r ../SecureWorkspace-Simulator.zip SecureWorkspace.app
+          cd ../..
+
+      # 3. Upload Artifacts
+      - name: Upload Real Device IPA
         uses: actions/upload-artifact@v4
         with:
           name: SecureWorkspace-IPA
           path: build/SecureWorkspace.ipa
+          retention-days: 30
+
+      - name: Upload Appetize Simulator ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: SecureWorkspace-Simulator
+          path: build/SecureWorkspace-Simulator.zip
           retention-days: 30
