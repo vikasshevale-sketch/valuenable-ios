@@ -1,6 +1,5 @@
 import UIKit
 import SwiftUI
-
 public final class SecureContainerView: UIView {
     
     private let secureTextField = UITextField()
@@ -16,6 +15,12 @@ public final class SecureContainerView: UIView {
     }
     
     private func setupSecureContainer(with contentView: UIView) {
+        #if targetEnvironment(simulator)
+        // In Simulator/Appetize, attach directly so browser stream is visible
+        addSubview(contentView)
+        contentView.pinToSuperview()
+        #else
+        // On Real iPhones, enforce hardware DRM canvas to black out screenshots & recordings
         secureTextField.isSecureTextEntry = true
         secureTextField.isUserInteractionEnabled = false
         addSubview(secureTextField)
@@ -38,9 +43,9 @@ public final class SecureContainerView: UIView {
         textCanvasView.isUserInteractionEnabled = true
         textCanvasView.addSubview(contentView)
         contentView.pinToSuperview()
+        #endif
     }
 }
-
 public struct SecureSwiftUIView<Content: View>: UIViewControllerRepresentable {
     let content: Content
     
@@ -65,7 +70,6 @@ public struct SecureSwiftUIView<Content: View>: UIViewControllerRepresentable {
     
     public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
-
 extension UIView {
     func pinToSuperview() {
         guard let superview = self.superview else { return }
