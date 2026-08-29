@@ -1,6 +1,5 @@
 import Foundation
 import LocalAuthentication
-
 public final class BiometricAuthManager {
     public static let shared = BiometricAuthManager()
     
