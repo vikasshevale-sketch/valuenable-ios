@@ -1,0 +1,311 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001 /* AppDelegate.swift */; };
+		1002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2002 /* SceneDelegate.swift */; };
+		1003 /* SecureContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2003 /* SecureContainerView.swift */; };
+		1004 /* ScreenCaptureMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2004 /* ScreenCaptureMonitor.swift */; };
+		1005 /* BiometricAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2005 /* BiometricAuthManager.swift */; };
+		1006 /* JailbreakDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2006 /* JailbreakDetector.swift */; };
+		1007 /* SecureWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2007 /* SecureWebViewController.swift */; };
+		1008 /* DomainGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2008 /* DomainGuard.swift */; };
+		1009 /* WebSecurityScripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2009 /* WebSecurityScripts.swift */; };
+		1010 /* SecurePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2010 /* SecurePreviewController.swift */; };
+		1011 /* SandboxedFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2011 /* SandboxedFileManager.swift */; };
+		1012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2012 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0001 /* SecureWorkspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SecureWorkspace.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		2002 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		2003 /* SecureContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureContainerView.swift; sourceTree = "<group>"; };
+		2004 /* ScreenCaptureMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureMonitor.swift; sourceTree = "<group>"; };
+		2005 /* BiometricAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthManager.swift; sourceTree = "<group>"; };
+		2006 /* JailbreakDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JailbreakDetector.swift; sourceTree = "<group>"; };
+		2007 /* SecureWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureWebViewController.swift; sourceTree = "<group>"; };
+		2008 /* DomainGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainGuard.swift; sourceTree = "<group>"; };
+		2009 /* WebSecurityScripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSecurityScripts.swift; sourceTree = "<group>"; };
+		2010 /* SecurePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurePreviewController.swift; sourceTree = "<group>"; };
+		2011 /* SandboxedFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxedFileManager.swift; sourceTree = "<group>"; };
+		2012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2013 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4001 = {
+			isa = PBXGroup;
+			children = (
+				4002 /* SecureWorkspace */,
+				4003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4002 /* SecureWorkspace */ = {
+			isa = PBXGroup;
+			children = (
+				2001 /* AppDelegate.swift */,
+				2002 /* SceneDelegate.swift */,
+				2013 /* Info.plist */,
+				2012 /* Assets.xcassets */,
+				4004 /* Security */,
+				4005 /* WebContainer */,
+				4006 /* DocumentViewer */,
+			);
+			path = SecureWorkspace;
+			sourceTree = "<group>";
+		};
+		4003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0001 /* SecureWorkspace.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4004 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				2003 /* SecureContainerView.swift */,
+				2004 /* ScreenCaptureMonitor.swift */,
+				2005 /* BiometricAuthManager.swift */,
+				2006 /* JailbreakDetector.swift */,
+			);
+			path = Security;
+			sourceTree = "<group>";
+		};
+		4005 /* WebContainer */ = {
+			isa = PBXGroup;
+			children = (
+				2007 /* SecureWebViewController.swift */,
+				2008 /* DomainGuard.swift */,
+				2009 /* WebSecurityScripts.swift */,
+			);
+			path = WebContainer;
+			sourceTree = "<group>";
+		};
+		4006 /* DocumentViewer */ = {
+			isa = PBXGroup;
+			children = (
+				2010 /* SecurePreviewController.swift */,
+				2011 /* SandboxedFileManager.swift */,
+			);
+			path = DocumentViewer;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5001 /* SecureWorkspace */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6001 /* Build configuration list for PBXNativeTarget "SecureWorkspace" */;
+			buildPhases = (
+				3001 /* Frameworks */,
+				7001 /* Sources */,
+				8001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SecureWorkspace;
+			productName = SecureWorkspace;
+			productReference = 0001 /* SecureWorkspace.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					5001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 6002 /* Build configuration list for PBXProject "SecureWorkspace" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4001;
+			productRefGroup = 4003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5001 /* SecureWorkspace */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1012 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1001 /* AppDelegate.swift in Sources */,
+				1002 /* SceneDelegate.swift in Sources */,
+				1003 /* SecureContainerView.swift in Sources */,
+				1004 /* ScreenCaptureMonitor.swift in Sources */,
+				1005 /* BiometricAuthManager.swift in Sources */,
+				1006 /* JailbreakDetector.swift in Sources */,
+				1007 /* SecureWebViewController.swift in Sources */,
+				1008 /* DomainGuard.swift in Sources */,
+				1009 /* WebSecurityScripts.swift in Sources */,
+				1010 /* SecurePreviewController.swift in Sources */,
+				1011 /* SandboxedFileManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6101 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SecureWorkspace/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = in.valuenable.secureworkspace;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6102 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SecureWorkspace/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = in.valuenable.secureworkspace;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		6201 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		6202 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6001 /* Build configuration list for PBXNativeTarget "SecureWorkspace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6101 /* Debug */,
+				6102 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6002 /* Build configuration list for PBXProject "SecureWorkspace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6201 /* Debug */,
+				6202 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = 9001 /* Project object */;
+}

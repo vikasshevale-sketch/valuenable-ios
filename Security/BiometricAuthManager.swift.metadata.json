@@ -1,0 +1,4 @@
+{
+  "summary": "BiometricAuthManager handles FaceID, TouchID, and device passcode authentication with automatic background timeout lock.",
+  "updatedAt": "2026-08-29T04:49:58.329381Z"
+}
