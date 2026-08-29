@@ -1,10 +1,11 @@
 import UIKit
+import MachO
 
 public final class JailbreakDetector {
     
     public static func isDeviceCompromised() -> Bool {
         #if targetEnvironment(simulator)
-        return false // Ignore simulator during development
+        return false
         #else
         return checkKnownJailbreakFiles() ||
                checkJailbreakSchemes() ||
@@ -45,7 +46,7 @@ public final class JailbreakDetector {
         do {
             try "test".write(toFile: path, atomically: true, encoding: .utf8)
             try? FileManager.default.removeItem(atPath: path)
-            return true // Successfully wrote outside sandbox!
+            return true
         } catch {
             return false
         }
@@ -53,9 +54,10 @@ public final class JailbreakDetector {
     
     private static func checkDynamicLibraryInjection() -> Bool {
         let suspiciousLibraries = ["Substrate", "FridaGadget", "cynject", "SSLKillSwitch"]
-        for index in 0..<_dyld_image_count() {
-            if let imageName = _dyld_get_image_name(index) {
-                let name = String(cString: imageName)
+        let count = _dyld_image_count()
+        for index in 0..<count {
+            if let cString = _dyld_get_image_name(index) {
+                let name = String(cString: cString)
                 for suspicious in suspiciousLibraries {
                     if name.contains(suspicious) {
                         return true
