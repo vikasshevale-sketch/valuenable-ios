@@ -1,25 +1,50 @@
 import WebKit
 
-struct WebSecurityScripts {
-    static var copyProtectionScript: WKUserScript {
-        let script = """
+public struct WebSecurityScripts {
+    public static var dlpPreventionScript: WKUserScript {
+        let css = """
+        * {
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+        }
+        input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+        """
+        
+        let js = """
         (function() {
-            // Prevent text selection and touch callouts globally
             var style = document.createElement('style');
             style.type = 'text/css';
-            style.innerHTML = '* { -webkit-user-select: none !important; -webkit-touch-callout: none !important; user-select: none !important; }';
-            document.getElementsByTagName('head')[0].appendChild(style);
+            style.innerHTML = `\(css)`;
+            document.head.appendChild(style);
             
-            // Block copy, cut, drag, and context menu events
-            ['copy', 'cut', 'dragstart', 'contextmenu'].forEach(function(eventType) {
-                document.addEventListener(eventType, function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return false;
-                }, true);
-            });
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+            
+            document.addEventListener('cut', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+            
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            }, true);
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            }, true);
         })();
         """
-        return WKUserScript(source: script, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+        
+        return WKUserScript(
+            source: js,
+            injectionTime: .atDocumentEnd,
+            forMainFrameOnly: false
+        )
     }
 }

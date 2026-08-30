@@ -1,7 +1,7 @@
 import UIKit
 import WebKit
 
-class SecureWebViewController: UIViewController, WKNavigationDelegate, WKDownloadDelegate {
+class SecureWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
     private var webView: WKWebView!
     private let secureContainer = SecureContainerView()
 
@@ -12,8 +12,6 @@ class SecureWebViewController: UIViewController, WKNavigationDelegate, WKDownloa
 
     private func setupSecureWebView() {
         let config = WKWebViewConfiguration()
-        
-        // Ephemeral data store ensures session cookies stay isolated from Safari and other apps
         config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
         config.userContentController.addUserScript(WebSecurityScripts.copyProtectionScript)
         
@@ -21,56 +19,29 @@ class SecureWebViewController: UIViewController, WKNavigationDelegate, WKDownloa
         webView.navigationDelegate = self
         webView.uiDelegate = self
 
-        // Wrap webView inside screenshot-protected view layer
         view.addSubview(secureContainer)
         secureContainer.frame = view.bounds
         secureContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         secureContainer.embed(childView: webView)
 
-        // Load entry workspace point
         if let url = URL(string: "https://valuenable.in") {
             let request = URLRequest(url: url)
             webView.load(request)
         }
     }
 
-    // MARK: - WKNavigationDelegate
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         guard let url = navigationAction.request.url else {
             decisionHandler(.cancel)
             return
         }
 
-        // Validate destination URL using DomainGuard
         if DomainGuard.isDomainAllowed(url: url) {
             decisionHandler(.allow)
         } else {
             decisionHandler(.cancel)
             showAccessRestrictedAlert()
         }
-    }
-
-    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-        // Intercept file downloads
-        if let mimeType = navigationResponse.response.mimeType, !mimeType.contains("text/html") && !mimeType.contains("application/json") {
-            if #available(iOS 14.5, *) {
-                decisionHandler(.download)
-                return
-            }
-        }
-        decisionHandler(.allow)
-    }
-
-    // MARK: - WKDownloadDelegate
-    @available(iOS 15.0, *)
-    func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
-        let tempURL = SandboxedFileManager.shared.saveTemporaryFile(data: Data(), fileName: suggestedFilename)
-        completionHandler(tempURL)
-    }
-
-    @available(iOS 15.0, *)
-    func downloadDidFinish(_ download: WKDownload) {
-        // Handle completed internal preview loading logic
     }
 
     private func showAccessRestrictedAlert() {
@@ -82,11 +53,27 @@ class SecureWebViewController: UIViewController, WKNavigationDelegate, WKDownloa
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
-}
 
-extension SecureWebViewController: WKUIDelegate {
-    // Disable web view context menu callouts
+    @available(iOS 13.0, *)
     func webView(_ webView: WKWebView, contextMenuConfigurationForElement elementInfo: WKContextMenuElementInfo, completionHandler: @escaping (UIContextMenuConfiguration?) -> Void) {
         completionHandler(nil)
+    }
+}
+
+// Separate extension for iOS 14.5+ download handling to prevent compilation failures on older deployment targets
+@available(iOS 14.5, *)
+extension SecureWebViewController: WKDownloadDelegate {
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        if let mimeType = navigationResponse.response.mimeType, !mimeType.contains("text/html") && !mimeType.contains("application/json") {
+            decisionHandler(.download)
+            return
+        }
+        decisionHandler(.allow)
+    }
+
+    @available(iOS 15.0, *)
+    func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
+        let tempURL = SandboxedFileManager.shared.saveTemporaryFile(data: Data(), fileName: suggestedFilename)
+        completionHandler(tempURL)
     }
 }

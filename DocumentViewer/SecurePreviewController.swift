@@ -23,28 +23,20 @@ class SecurePreviewController: UIViewController, QLPreviewControllerDataSource, 
         previewVC.dataSource = self
         previewVC.delegate = self
         
-        // Embed QuickLook viewer directly into secure controller
         addChild(previewVC)
         view.addSubview(previewVC.view)
         previewVC.view.frame = view.bounds
         previewVC.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         previewVC.didMove(toParent: self)
         
-        // Remove export / action buttons from navigation bar
         navigationItem.rightBarButtonItems = nil
     }
 
-    // MARK: - QLPreviewControllerDataSource
     func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
         return fileURL != nil ? 1 : 0
     }
 
     func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        return (fileURL as QLPreviewItem?) ?? NSURL()
-    }
-
-    // Disable system activity / sharing options inside QuickLook
-    func previewController(_ controller: QLPreviewController, transitionViewFor item: QLPreviewItem) -> UIView? {
-        return nil
+        return (fileURL as QLPreviewItem?) ?? (NSURL() as QLPreviewItem)
     }
 }
