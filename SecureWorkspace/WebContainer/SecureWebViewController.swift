@@ -200,7 +200,7 @@ public final class SecureWebViewController: UIViewController, WKNavigationDelega
     private func showDomainBlockedAlert(host: String) {
         let alert = UIAlertController(
             title: "Access Restricted",
-            message: "Navigation outside of the authorized Valuenable Google Workspace is blocked by security policy.",
+            message: "Navigation to \(host.isEmpty ? "an unauthorized host" : host) is blocked by the Valuenable Google Workspace security policy.",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "OK", style: .default))

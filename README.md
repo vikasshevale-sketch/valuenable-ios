@@ -138,3 +138,7 @@ correct production architecture is a native Google OAuth/OIDC flow using
 native Google APIs. A WKWebView cannot safely inherit the authenticated Safari
 session's Google cookies, so simply adding OAuth and then loading Gmail in WKWebView
 would not be a valid fix.
+
+
+## Important Google authentication limitation
+Google OAuth authentication is not supported inside an embedded WKWebView. Google documents that iOS apps should use Google Sign-In for iOS or AppAuth for OAuth authorization instead of an embedded user-agent. This project currently keeps Gmail in WKWebView for the secure container; if Google returns `disallowed_useragent`, a native OAuth integration is required and a Google iOS OAuth client ID must be configured.
