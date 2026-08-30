@@ -1,33 +1,64 @@
 import UIKit
-import Combine
 
-/// Monitors screen recording, AirPlay mirroring, and video call screen sharing (Zoom, Teams, Google Meet).
-/// When active, notifies the UI to display a full-screen blackout warning overlay.
-public final class ScreenCaptureMonitor: ObservableObject {
-    public static let shared = ScreenCaptureMonitor()
-    
-    @Published public private(set) var isScreenCaptured: Bool = false
-    
-    private init() {
-        checkCurrentCaptureState()
-        setupCaptureObserver()
-    }
-    
-    private func checkCurrentCaptureState() {
-        self.isScreenCaptured = UIScreen.main.isCaptured
-    }
-    
-    private func setupCaptureObserver() {
+class ScreenCaptureMonitor {
+    static let shared = ScreenCaptureMonitor()
+    private var overlayView: UIView?
+
+    func startMonitoring(in window: UIWindow?) {
         NotificationCenter.default.addObserver(
-            forName: UIScreen.capturedDidChangeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self = self else { return }
-            self.isScreenCaptured = UIScreen.main.isCaptured
-            #if DEBUG
-            print("[SecurityGuard] Screen capture state changed: \(self.isScreenCaptured)")
-            #endif
+            self,
+            selector: #selector(screenCaptureStateChanged),
+            name: UIScreen.capturedDidChangeNotification,
+            object: nil
+        )
+        checkCurrentCaptureStatus(window: window)
+    }
+
+    @objc private func screenCaptureStateChanged() {
+        DispatchQueue.main.async {
+            if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+                self.checkCurrentCaptureStatus(window: window)
+            }
         }
+    }
+
+    private func checkCurrentCaptureStatus(window: UIWindow?) {
+        let isCaptured = UIScreen.main.isCaptured
+        if isCaptured {
+            showSecurityOverlay(on: window)
+        } else {
+            removeSecurityOverlay()
+        }
+    }
+
+    private func showSecurityOverlay(on window: UIWindow?) {
+        guard overlayView == nil, let window = window else { return }
+        
+        let overlay = UIView(frame: window.bounds)
+        overlay.backgroundColor = .systemBackground
+        
+        let label = UILabel()
+        label.text = "Screen sharing or recording is disabled for this secure workspace."
+        label.textColor = .label
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        overlay.addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: overlay.leadingAnchor, constant: 20),
+            label.trailingAnchor.constraint(equalTo: overlay.trailingAnchor, constant: -20),
+            label.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)
+        ])
+        
+        window.addSubview(overlay)
+        self.overlayView = overlay
+    }
+
+    private func removeSecurityOverlay() {
+        overlayView?.removeFromSuperview()
+        overlayView = nil
     }
 }
