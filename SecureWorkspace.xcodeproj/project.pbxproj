@@ -25,15 +25,15 @@
 		A100000D2C1000000000000D /* SecureWorkspace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SecureWorkspace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B10000012C10000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B10000022C10000000000002 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		B10000032C10000000000003 /* SecureWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContainer/SecureWebViewController.swift; sourceTree = "<group>"; };
-		B10000042C10000000000004 /* DomainGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContainer/DomainGuard.swift; sourceTree = "<group>"; };
-		B10000052C10000000000005 /* WebSecurityScripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContainer/WebSecurityScripts.swift; sourceTree = "<group>"; };
-		B10000062C10000000000006 /* SecureContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Security/SecureContainerView.swift; sourceTree = "<group>"; };
-		B10000072C10000000000007 /* ScreenCaptureMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Security/ScreenCaptureMonitor.swift; sourceTree = "<group>"; };
-		B10000082C10000000000008 /* BiometricAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Security/BiometricAuthManager.swift; sourceTree = "<group>"; };
-		B10000092C10000000000009 /* JailbreakDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Security/JailbreakDetector.swift; sourceTree = "<group>"; };
-		B100000A2C1000000000000A /* SandboxedFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewer/SandboxedFileManager.swift; sourceTree = "<group>"; };
-		B100000B2C1000000000000B /* SecurePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentViewer/SecurePreviewController.swift; sourceTree = "<group>"; };
+		B10000032C10000000000003 /* SecureWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureWebViewController.swift; sourceTree = "<group>"; };
+		B10000042C10000000000004 /* DomainGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainGuard.swift; sourceTree = "<group>"; };
+		B10000052C10000000000005 /* WebSecurityScripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSecurityScripts.swift; sourceTree = "<group>"; };
+		B10000062C10000000000006 /* SecureContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureContainerView.swift; sourceTree = "<group>"; };
+		B10000072C10000000000007 /* ScreenCaptureMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureMonitor.swift; sourceTree = "<group>"; };
+		B10000082C10000000000008 /* BiometricAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthManager.swift; sourceTree = "<group>"; };
+		B10000092C10000000000009 /* JailbreakDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JailbreakDetector.swift; sourceTree = "<group>"; };
+		B100000A2C1000000000000A /* SandboxedFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxedFileManager.swift; sourceTree = "<group>"; };
+		B100000B2C1000000000000B /* SecurePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurePreviewController.swift; sourceTree = "<group>"; };
 		B100000C2C1000000000000C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B100000E2C1000000000000E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
