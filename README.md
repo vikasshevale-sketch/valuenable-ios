@@ -106,3 +106,35 @@ Since employees are using personal devices, choose one of the three zero-frictio
 2. Navigate to **Security > Access and data control > Device management**.
 3. Under **Account Chooser / Allowed Domains**, ensure only `valuenable.in` is specified.
 4. (Optional) Under **Context-Aware Access**, create an access policy requiring the specific app identifier (`in.valuenable.secureworkspace`).
+
+## iPhone Google Authentication Fix
+
+The iOS web container was previously cancelling Google authentication requests and
+reloading them after adding `X-GoogApps-Allowed-Domains`. That can interrupt Google's
+redirect/cookie authentication flow and result in authentication failures on iPhone.
+
+The corrected source now:
+
+- Loads `https://mail.google.com/a/valuenable.in/` normally.
+- Never cancels and reloads `accounts.google.com` requests.
+- Never injects `X-GoogApps-Allowed-Domains` into Google authentication requests.
+- Keeps the Google Workspace/Google CDN host allow-list.
+- Keeps the existing Face ID, jailbreak detection, screen-capture overlay, DLP script,
+  and secure container functionality.
+- Adds DEBUG navigation error logging to help identify any remaining Google/iOS errors.
+
+### Important Google Workspace setting
+
+The application-side host allow-list is not a replacement for Google Workspace
+identity policy. In the Google Admin console, enforce the `valuenable.in` account
+requirement using your Workspace authentication/access policy. The app should not
+attempt to enforce the user's Google identity by modifying Google login HTTP headers.
+
+### If Google still shows `disallowed_useragent`
+
+That means Google is rejecting embedded web authentication itself. In that case the
+correct production architecture is a native Google OAuth/OIDC flow using
+`ASWebAuthenticationSession` (or Google's supported iOS sign-in SDK) followed by
+native Google APIs. A WKWebView cannot safely inherit the authenticated Safari
+session's Google cookies, so simply adding OAuth and then loading Gmail in WKWebView
+would not be a valid fix.
