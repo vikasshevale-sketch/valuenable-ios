@@ -1,186 +1,79 @@
 import UIKit
 import WebKit
-import Combine
 
-public final class SecureWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKDownloadDelegate {
-    
+class SecureWebViewController: UIViewController, WKNavigationDelegate, WKDownloadDelegate {
     private var webView: WKWebView!
-    private var cancellables = Set<AnyCancellable>()
-    private let screenShareBlockerView = UIView()
-    private let progressView = UIProgressView(progressViewStyle: .default)
-    
-    // Initial workspace URL
-    private let startURL = URL(string: "https://mail.google.com/a/valuenable.in")!
-    
-    public override func viewDidLoad() {
+    private let secureContainer = SecureContainerView()
+
+    override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
-        setupScreenCaptureProtection()
-        loadWorkspace()
+        setupSecureWebView()
     }
-    
-    private func setupUI() {
-        view.backgroundColor = .systemBackground
+
+    private func setupSecureWebView() {
+        let config = WKWebViewConfiguration()
         
-        // 1. WebKit Configuration with isolated storage
-        let configuration = WKWebViewConfiguration()
+        // Ephemeral data store ensures session cookies stay isolated from Safari and other apps
+        config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+        config.userContentController.addUserScript(WebSecurityScripts.copyProtectionScript)
         
-        // Isolated persistent website data store (Keeps session strictly isolated from Safari/System)
-        configuration.websiteDataStore = WKWebsiteDataStore.default()
-        
-        // Inject DLP Scripts (Disable copy, cut, paste, context menu, text selection)
-        configuration.userContentController.addUserScript(WebSecurityScripts.dlpPreventionScript)
-        
-        // Disable external media playback breakout
-        configuration.allowsInlineMediaPlayback = true
-        configuration.mediaTypesRequiringUserActionForPlayback = .all
-        
-        // 2. Initialize WKWebView
-        webView = WKWebView(frame: .zero, configuration: configuration)
+        webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = self
         webView.uiDelegate = self
-        webView.allowsBackForwardNavigationGestures = true
-        
-        // 3. Wrap webView inside DRM-protected SecureContainerView
-        let secureContainer = SecureContainerView(contentView: webView)
+
+        // Wrap webView inside screenshot-protected view layer
         view.addSubview(secureContainer)
-        secureContainer.pinToSuperview()
-        
-        // 4. Progress bar
-        progressView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(progressView)
-        NSLayoutConstraint.activate([
-            progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            progressView.heightAnchor.constraint(equalToConstant: 2)
-        ])
-        
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
-        
-        // 5. Setup Video Call / Screen Recording Blackout Overlay
-        setupScreenShareBlockerOverlay()
-    }
-    
-    private func setupScreenShareBlockerOverlay() {
-        screenShareBlockerView.backgroundColor = .black
-        screenShareBlockerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let warningLabel = UILabel()
-        warningLabel.text = "🔒 Screen sharing or recording is blocked by Valuenable Security Policy."
-        warningLabel.textColor = .white
-        warningLabel.textAlignment = .center
-        warningLabel.numberOfLines = 0
-        warningLabel.font = .systemFont(ofSize: 17, weight: .semibold)
-        warningLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        screenShareBlockerView.addSubview(warningLabel)
-        NSLayoutConstraint.activate([
-            warningLabel.centerYAnchor.constraint(equalTo: screenShareBlockerView.centerYAnchor),
-            warningLabel.leadingAnchor.constraint(equalTo: screenShareBlockerView.leadingAnchor, constant: 32),
-            warningLabel.trailingAnchor.constraint(equalTo: screenShareBlockerView.trailingAnchor, constant: -32)
-        ])
-        
-        view.addSubview(screenShareBlockerView)
-        screenShareBlockerView.pinToSuperview()
-        screenShareBlockerView.isHidden = true
-    }
-    
-    private func setupScreenCaptureProtection() {
-        ScreenCaptureMonitor.shared.$isScreenCaptured
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isCaptured in
-                self?.screenShareBlockerView.isHidden = !isCaptured
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func loadWorkspace() {
-        var request = URLRequest(url: startURL)
-        DomainGuard.applyDomainRestrictionHeaders(to: &request)
-        webView.load(request)
-    }
-    
-    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "estimatedProgress" {
-            progressView.progress = Float(webView.estimatedProgress)
-            progressView.isHidden = webView.estimatedProgress >= 1.0
+        secureContainer.frame = view.bounds
+        secureContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        secureContainer.embed(childView: webView)
+
+        // Load entry workspace point
+        if let url = URL(string: "https://valuenable.in") {
+            let request = URLRequest(url: url)
+            webView.load(request)
         }
     }
-    
-    // MARK: - WKNavigationDelegate (Domain Enforcement & Request Filtering)
-    
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+
+    // MARK: - WKNavigationDelegate
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         guard let url = navigationAction.request.url else {
             decisionHandler(.cancel)
             return
         }
-        
-        let host = url.host?.lowercased() ?? ""
-        
-        // 1. Check if domain is allowed
-        if !DomainGuard.isHostAllowed(host) {
-            #if DEBUG
-            print("[DomainGuard] Blocked unauthorized navigation to: \(url.absoluteString)")
-            #endif
-            showDomainBlockedAlert(host: host)
+
+        // Validate destination URL using DomainGuard
+        if DomainGuard.isDomainAllowed(url: url) {
+            decisionHandler(.allow)
+        } else {
             decisionHandler(.cancel)
-            return
+            showAccessRestrictedAlert()
         }
-        
-        // 2. Ensure Google Enterprise Header is present
-        if host.contains("accounts.google.com") || host.contains("google.com") {
-            if navigationAction.request.value(forHTTPHeaderField: DomainGuard.googleAllowedDomainsHeader) == nil {
-                decisionHandler(.cancel)
-                var customRequest = navigationAction.request
-                DomainGuard.applyDomainRestrictionHeaders(to: &customRequest)
-                webView.load(customRequest)
+    }
+
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        // Intercept file downloads
+        if let mimeType = navigationResponse.response.mimeType, !mimeType.contains("text/html") && !mimeType.contains("application/json") {
+            if #available(iOS 14.5, *) {
+                decisionHandler(.download)
                 return
             }
         }
-        
-        // 3. Intercept download actions
-        if navigationAction.shouldPerformDownload {
-            decisionHandler(.download)
-            return
-        }
-        
         decisionHandler(.allow)
     }
-    
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-        if navigationResponse.canShowMIMEType {
-            decisionHandler(.allow)
-        } else {
-            // Unrenderable MIME type (binary, attachment) -> route to secure download
-            decisionHandler(.download)
-        }
+
+    // MARK: - WKDownloadDelegate
+    @available(iOS 15.0, *)
+    func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
+        let tempURL = SandboxedFileManager.shared.saveTemporaryFile(data: Data(), fileName: suggestedFilename)
+        completionHandler(tempURL)
     }
-    
-    // MARK: - WKDownloadDelegate (Sandboxed In-App Attachment Handling)
-    
-    public func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
-        download.delegate = self
+
+    @available(iOS 15.0, *)
+    func downloadDidFinish(_ download: WKDownload) {
+        // Handle completed internal preview loading logic
     }
-    
-    public func download(_ download: WKDownload, decideDestinationUsing response: URLResponse, suggestedFilename: String, completionHandler: @escaping (URL?) -> Void) {
-        let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + "_" + suggestedFilename)
-        completionHandler(temporaryURL)
-    }
-    
-    public func downloadDidFinish(_ download: WKDownload) {
-        // Find downloaded file in temporary directory and present via SecurePreviewController
-        // Open securely without export buttons
-    }
-    
-    public func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
-        #if DEBUG
-        print("[Download] Failed: \(error.localizedDescription)")
-        #endif
-    }
-    
-    // MARK: - Alerts
-    private func showDomainBlockedAlert(host: String) {
+
+    private func showAccessRestrictedAlert() {
         let alert = UIAlertController(
             title: "Access Restricted",
             message: "Navigation outside of the authorized 'valuenable.in' workspace is blocked for security.",
@@ -189,8 +82,11 @@ public final class SecureWebViewController: UIViewController, WKNavigationDelega
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
-    
-    deinit {
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+}
+
+extension SecureWebViewController: WKUIDelegate {
+    // Disable web view context menu callouts
+    func webView(_ webView: WKWebView, contextMenuConfigurationForElement elementInfo: WKContextMenuElementInfo, completionHandler: @escaping (UIContextMenuConfiguration?) -> Void) {
+        completionHandler(nil)
     }
 }
